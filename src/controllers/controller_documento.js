@@ -8,6 +8,7 @@ import fs from 'fs'
 import { fileURLToPath } from 'url'
 import path, { dirname } from 'path'
 import { exec } from 'child_process';
+import { log } from 'console'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -77,34 +78,33 @@ ControladorDocumento.postDocumento = async (req, res, next) => {
             id_user: id_user
         }
 
-        const pdf_name = req.file.filename
-        const command = `python3 load_pdf.py public/documentos/${pdf_name}`;
+        const command = `python3 load_pdf.py public/documentos/${dataDocumento.documento}`;
 
-        let msg_stdout = ''
-        const executePython = () => {
-            return new Promise((resolve, reject) => {
-                exec(command, (error, stdout, stderr) => {
-                    if (error) {
-                        msg_stdout = `Error al ejecutar el comando: ${error.message}`
-                        reject(msg_stdout);
-                    }
-                    if (stderr) {
-                        msg_stdout = `stderr: ${stderr}`
-                        reject(msg_stdout);
-                    }
-                    msg_stdout = `stdout: ${stdout}`
-                    resolve(msg_stdout);
-                });
-            });
-        };
-        msg_stdout = await executePython();
+        // let msg_stdout = ''
+        // const executePython = () => {
+        //     return new Promise((resolve, reject) => {
+        exec(command, (error, stdout, stderr) => {
+            if (error) {
+                console.log(`Error al ejecutar el comando: ${error.message}`)
+                // reject(msg_stdout);
+            }
+            if (stderr) {
+                console.log(`stderr: ${stderr}`)
+                // reject(msg_stdout);
+            }
+            console.log(`stdout: ${stdout}`)
+            // resolve(msg_stdout);
+        });
+        //     });
+        // };
+        // msg_stdout = await executePython();
         await Documento.create(dataDocumento)
 
         res.status(200).json({
-            message: 'Documento agregado',
-            stdout: msg_stdout
+            message: 'Documento agregado'
         })
     } catch (err) {
+        console.log(err);
         res.status(500).json({
             message: 'Ocurrio un error',
             error: err.message

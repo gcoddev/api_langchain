@@ -31,10 +31,9 @@ const uploadPdf = multer({
         cb("Error, solo se permite los siguientes tipo de archivos: " + filetypes)
     },
     limits: {
-        fileSize: 1024 * 1024 * 5
+        fileSize: 1024 * 1024 * 10
     }
 }).single('documento')
-
 
 
 router.route('/api/documentosAll')
@@ -42,7 +41,20 @@ router.route('/api/documentosAll')
 
 router.route('/api/documentos/:id_user')
     .get(ControladorDocumento.getDocumentos)
-    .post(token.decodeToken, uploadPdf, ControladorDocumento.postDocumento)
+    .post(token.decodeToken, (req, res, next) => {
+        uploadPdf(req, res, function (err) {
+            if (err instanceof multer.MulterError) {
+                if (err.code === 'LIMIT_FILE_SIZE') {
+                    return res.status(400).json({ message: 'El archivo es demasiado grande. El tamaño máximo permitido es 10MB.' });
+                }
+                return res.status(400).json({ message: err.message });
+            } else if (err) {
+                return res.status(400).json({ message: err.message });
+            }
+            next();
+        });
+    }, ControladorDocumento.postDocumento);
+
 
 router.route('/api/documento/:id_doc')
     .get(ControladorDocumento.getDocumento)
