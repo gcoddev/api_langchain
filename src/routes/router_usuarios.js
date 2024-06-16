@@ -11,6 +11,7 @@ router.route('/api/token')
     .post(ControladorUsuario.verificarToken)
 
 router.route('/api/usuarios')
+    .get(token.decodeToken, ControladorUsuario.getUsuarios)
     .post(token.decodeToken, ControladorUsuario.postUsuario)
 
 router.route('/api/usuario/:id_user')
