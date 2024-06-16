@@ -10,6 +10,7 @@ import fs from 'fs'
 import { fileURLToPath } from 'url'
 import path, { dirname } from 'path'
 import { exec } from 'child_process'
+import moment from 'moment'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -27,19 +28,19 @@ ControladorUsuario.login = async (req, res) => {
         });
         if (usuario) {
             const credenciales = {
-                nombres: usuario.nombre,
-                ingreso: usuario.fecha_nac,
+                nombres: usuario.nombres,
                 key_usuario: usuario.id
             }
             const validarPassword = pass.comparaPassword(password, usuario.password);
             if (validarPassword) {
                 const token = keys.createToken(credenciales);
-                const keyPer = cryptr.encrypt(usuario.id);
+                // const keyPer = cryptr.encrypt(usuario.id);
                 res.status(200).json({
                     auth: true,
                     message: 'Bienvenido',
-                    credencial: keyPer,
-                    token
+                    credencial: usuario.id,
+                    token,
+                    expires: moment().add(120, 'minutes').unix()
                 })
             } else {
                 res.status(401).json({

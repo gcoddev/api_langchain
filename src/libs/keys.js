@@ -10,7 +10,6 @@ token.createToken = (usuario) => {
         iss: 'ApiChatbotLangChain',
         sub: usuario.key_usuario,
         name: usuario.nombres,
-        entry: usuario.ingreso,
         iat: moment().unix(),
         exp: moment().add(120, 'minutes').unix()
     }
