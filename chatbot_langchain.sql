@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 18-06-2024 a las 04:56:00
+-- Tiempo de generación: 18-06-2024 a las 20:23:37
 -- Versión del servidor: 11.4.2-MariaDB
 -- Versión de PHP: 8.3.8
 
@@ -49,8 +49,8 @@ CREATE TABLE `documentos` (
   `titulo` varchar(50) NOT NULL,
   `descripcion` varchar(255) DEFAULT NULL,
   `documento` varchar(255) NOT NULL,
-  `fecha` date NOT NULL,
-  `estado` int(1) NOT NULL DEFAULT 1,
+  `estado` enum('0','1','2') NOT NULL DEFAULT '1',
+  `creado_el` timestamp NOT NULL DEFAULT current_timestamp(),
   `id_user` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -64,7 +64,7 @@ CREATE TABLE `roles` (
   `id_rol` int(11) NOT NULL,
   `nombre` varchar(25) NOT NULL,
   `descripcion` varchar(100) DEFAULT NULL,
-  `estado` enum('0','1') NOT NULL DEFAULT '1'
+  `estado` enum('0','1','2') NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
