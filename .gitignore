@@ -1,8 +1,8 @@
 node_modules/
 env/
 
-public/documentos/*.pkl
+conversations/*.pkl
+public/documentos/*.pdf
 public/embeddings/*.pkl
 
-conversations/
 .env
