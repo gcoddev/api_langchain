@@ -2,18 +2,11 @@
 import Usuario from '../models/Usuario.js'
 import Rol from '../models/Rol.js'
 
-import Cryptr from 'cryptr'
-const cryptr = new Cryptr('keyCryptrNodeAPI')
+// import Cryptr from 'cryptr'
+// const cryptr = new Cryptr('keyCryptrNodeAPI')
 import pass from '../libs/pass.js'
 import keys from '../libs/keys.js'
-import fs from 'fs'
-import { fileURLToPath } from 'url'
-import path, { dirname } from 'path'
-import { exec } from 'child_process'
 import moment from 'moment'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
 
 const ControladorUsuario = () => { }
 
@@ -125,7 +118,8 @@ ControladorUsuario.postUsuario = async (req, res, next) => {
             celular: post.celular,
             email: post.email,
             username: post.username,
-            password: pass.encryptPassword(post.password)
+            password: pass.encryptPassword(post.password),
+            id_rol: post.id_rol
         }
         await Usuario.create(dataUsuario)
 

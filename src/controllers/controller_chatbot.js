@@ -59,9 +59,10 @@ ControladorChatbot.preguntar = async (req, res) => {
             const jsonResponse = await executePython();
             res.status(200).json(jsonResponse);
         } catch (err) {
+            console.log(err);
             res.status(500).json({
                 message: 'Ocurrió un error',
-                error: err
+                error: err.message
             });
         }
     }

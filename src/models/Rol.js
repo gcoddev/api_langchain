@@ -17,8 +17,9 @@ const Rol = db.define('roles', {
         allowNull: true
     },
     estado: {
-        type: Sequelize.ENUM('0', '1'),
-        allowNull: false
+        type: Sequelize.ENUM('0', '1', '2'),
+        allowNull: false,
+        defaultValue: '1'
     }
 });
 

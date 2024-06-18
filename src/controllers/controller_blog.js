@@ -1,5 +1,5 @@
 'use strict'
-import Documento from '../models/Documento.js'
+import Blog from '../models/Blog.js'
 // import Usuario from '../models/Usuario.js'
 
 import fs from 'fs'
@@ -10,11 +10,11 @@ import { Sequelize } from 'sequelize'
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const ControladorDocumento = () => { }
+const ControladorBlog = () => { }
 
-ControladorDocumento.getDocumentosAll = async (req, res) => {
+ControladorBlog.getBlogsAll = async (req, res) => {
     try {
-        const documentos = await Documento.findAll({
+        const blogs = await Blog.findAll({
             // include: ({
             //     model: Usuario
             // }),
@@ -24,12 +24,12 @@ ControladorDocumento.getDocumentosAll = async (req, res) => {
                 }
             }
         })
-        if (documentos.length == 0) {
+        if (blogs.length == 0) {
             return res.status(404).json({
-                message: 'Sin documentos'
+                message: 'Sin blogs'
             })
         }
-        return res.status(200).json(documentos)
+        return res.status(200).json(blogs)
     } catch (err) {
         console.log(err);
         res.status(500).json({
@@ -39,10 +39,10 @@ ControladorDocumento.getDocumentosAll = async (req, res) => {
     }
 }
 
-ControladorDocumento.getDocumentos = async (req, res) => {
+ControladorBlog.getBlogs = async (req, res) => {
     const { id_user } = req.params
     try {
-        const documentos = await Documento.findAll({
+        const blogs = await Blog.findAll({
             where: {
                 id_user: id_user,
                 estado: {
@@ -50,12 +50,12 @@ ControladorDocumento.getDocumentos = async (req, res) => {
                 }
             }
         })
-        if (documentos.length == 0) {
+        if (blogs.length == 0) {
             return res.status(404).json({
-                message: 'Sin documentos'
+                message: 'Sin blogs'
             })
         }
-        return res.status(200).json(documentos)
+        return res.status(200).json(blogs)
     } catch (err) {
         console.log(err);
         res.status(500).json({
@@ -65,23 +65,23 @@ ControladorDocumento.getDocumentos = async (req, res) => {
     }
 }
 
-ControladorDocumento.getDocumento = async (req, res) => {
-    const { id_doc } = req.params
+ControladorBlog.getBlog = async (req, res) => {
+    const { id_blog } = req.params
     try {
-        const documento = await Documento.findOne({
+        const blog = await Blog.findOne({
             where: {
-                id_doc: id_doc,
+                id_blog: id_blog,
                 estado: {
                     [Sequelize.Op.ne]: '2'
                 }
             }
         })
-        if (!documento) {
+        if (!blog) {
             return res.status(404).json({
-                message: 'El documento no existe'
+                message: 'El blog no existe'
             })
         }
-        return res.status(200).json(documento)
+        return res.status(200).json(blog)
     } catch (err) {
         console.log(err);
         res.status(500).json({
@@ -91,21 +91,22 @@ ControladorDocumento.getDocumento = async (req, res) => {
     }
 }
 
-ControladorDocumento.postDocumento = async (req, res, next) => {
+ControladorBlog.postBlog = async (req, res, next) => {
     const post = { ...req.body }
     const { id_user } = req.params
     try {
-        const dataDocumento = {
+        const dataBlog = {
             titulo: post.titulo,
             descripcion: post.descripcion,
-            documento: req.file.filename,
+            imagen: req.file.filename,
+            contenido: post.contenido,
             id_user: id_user
         }
 
-        await Documento.create(dataDocumento)
+        await Blog.create(dataBlog)
 
         res.status(200).json({
-            message: 'Documento agregado'
+            message: 'Blog agregado'
         })
     } catch (err) {
         console.log(err);
@@ -116,30 +117,29 @@ ControladorDocumento.postDocumento = async (req, res, next) => {
     }
 }
 
-ControladorDocumento.putDocumento = async (req, res, next) => {
-    const { id_doc } = req.params
+ControladorBlog.putBlog = async (req, res, next) => {
+    const { id_blog } = req.params
     const put = { ...req.body }
     try {
-        const dataDocumento = {
+        const dataBlog = {
             titulo: put.titulo,
             descripcion: put.descripcion,
-            estado: put.estado
+            contenido: put.contenido,
+            estado: put.estado,
         }
-        const doc = await Documento.update(dataDocumento, {
+        const blog = await Blog.update(dataBlog, {
             where: {
-                id_doc: id_doc,
-                estado: {
-                    [Sequelize.Op.ne]: '2'
-                }
+                id_blog: id_blog
             }
         })
-        if (!doc[0]) {
+        console.log(blog);
+        if (!blog[0]) {
             res.status(404).json({
-                message: 'El documento no existe'
+                message: 'El blog no existe'
             })
         }
         res.status(200).json({
-            message: 'Datos actualizado'
+            message: 'Datos actualizados'
         })
     } catch (err) {
         console.log(err);
@@ -150,31 +150,28 @@ ControladorDocumento.putDocumento = async (req, res, next) => {
     }
 }
 
-ControladorDocumento.putDocumentoPdf = async (req, res, next) => {
-    const { id_doc, pdf } = req.params
+ControladorBlog.putBlogImg = async (req, res, next) => {
+    const { id_blog, img } = req.params
     try {
-        const dataDocumento = {
-            documento: req.file.filename
+        const dataBlog = {
+            imagen: req.file.filename
         }
-        const doc = await Documento.update(dataDocumento, {
+        const blog = await Blog.update(dataBlog, {
             where: {
-                id_doc: id_doc,
-                estado: {
-                    [Sequelize.Op.ne]: '2'
-                }
+                id_blog: id_blog
             }
         })
-        if (!doc[0]) {
+        if (!blog[0]) {
             res.status(404).json({
-                message: 'El documento no existe'
+                message: 'El blog no existe'
             })
         }
-        const pdfPath = path.join(__dirname, '../../public/documentos/' + pdf)
-        if (fs.existsSync(pdfPath)) {
-            fs.unlinkSync(pdfPath)
+        const imagePath = path.join(__dirname, '../../public/imagenes/', img);
+        if (fs.existsSync(imagePath)) {
+            fs.unlinkSync(imagePath);
         }
         res.status(200).json({
-            message: 'Documento actualizado'
+            message: 'Imagen blog actualizado'
         })
     } catch (err) {
         console.log(err);
@@ -185,28 +182,23 @@ ControladorDocumento.putDocumentoPdf = async (req, res, next) => {
     }
 }
 
-ControladorDocumento.deleteDocumento = async (req, res, next) => {
-    const { id_doc, pdf } = req.params
+ControladorBlog.deleteBlog = async (req, res, next) => {
+    const { id_blog, img } = req.params
     try {
-        const dataDocumento = {
+        const dataBlog = {
             estado: '2'
         }
-        const doc = await Documento.update(dataDocumento, {
+        await Blog.update(dataBlog, {
             where: {
-                id_doc: id_doc
+                id_blog: id_blog
             }
         })
-        if (!doc[0]) {
-            res.status(404).json({
-                message: 'El documento no existe'
-            })
-        }
-        const pdfPath = path.join(__dirname, '../../public/documentos/' + pdf)
-        if (fs.existsSync(pdfPath)) {
-            fs.unlinkSync(pdfPath)
+        const imagePath = path.join(__dirname, '../../public/imagenes/', img);
+        if (fs.existsSync(imagePath)) {
+            fs.unlinkSync(imagePath);
         }
         res.status(200).json({
-            message: 'Documento eliminado'
+            message: 'Blog eliminado'
         })
     } catch (err) {
         console.log(err);
@@ -217,4 +209,4 @@ ControladorDocumento.deleteDocumento = async (req, res, next) => {
     }
 }
 
-export default ControladorDocumento
+export default ControladorBlog

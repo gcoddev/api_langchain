@@ -6,8 +6,8 @@ import ControladorDocumento from '../controllers/controller_documento.js'
 import { fileURLToPath } from 'url';
 import path, { dirname } from 'path'
 import multer from 'multer'
-import { uuid } from 'uuidv4'
 import { v4 } from 'uuid';
+import { exec } from 'child_process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -35,25 +35,41 @@ const uploadPdf = multer({
     }
 }).single('documento')
 
+const responseUpload = (req, res, next) => {
+    uploadPdf(req, res, function (err) {
+        if (err instanceof multer.MulterError) {
+            if (err.code === 'LIMIT_FILE_SIZE') {
+                return res.status(400).json({ message: 'El archivo es demasiado grande. El tamaño máximo permitido es 10MB.' });
+            }
+            return res.status(400).json({ message: err.message });
+        } else if (err) {
+            return res.status(400).json({ message: err.message });
+        } else {
+            loadPdfs()
+        }
+        next();
+    });
+}
+
+const loadPdfs = () => {
+    console.log('Load pdfs for the embeddings...');
+    exec('python3 load_pdf.py', (error, stdout, stderr) => {
+        if (error) {
+            console.log(`Error al ejecutar el comando: ${error.message}`)
+        }
+        if (stderr) {
+            console.log(`stderr: ${stderr}`)
+        }
+        console.log(stdout)
+    });
+}
 
 router.route('/api/documentosAll')
     .get(ControladorDocumento.getDocumentosAll)
 
 router.route('/api/documentos/:id_user')
     .get(ControladorDocumento.getDocumentos)
-    .post(token.decodeToken, (req, res, next) => {
-        uploadPdf(req, res, function (err) {
-            if (err instanceof multer.MulterError) {
-                if (err.code === 'LIMIT_FILE_SIZE') {
-                    return res.status(400).json({ message: 'El archivo es demasiado grande. El tamaño máximo permitido es 10MB.' });
-                }
-                return res.status(400).json({ message: err.message });
-            } else if (err) {
-                return res.status(400).json({ message: err.message });
-            }
-            next();
-        });
-    }, ControladorDocumento.postDocumento);
+    .post(token.decodeToken, responseUpload, ControladorDocumento.postDocumento);
 
 
 router.route('/api/documento/:id_doc')
@@ -61,7 +77,7 @@ router.route('/api/documento/:id_doc')
     .put(token.decodeToken, ControladorDocumento.putDocumento)
 
 router.route('/api/documento/:id_doc/:pdf')
-    .put(token.decodeToken, uploadPdf, ControladorDocumento.putDocumentoPdf)
+    .put(token.decodeToken, responseUpload, ControladorDocumento.putDocumentoPdf)
     .delete(token.decodeToken, ControladorDocumento.deleteDocumento)
 
 export default router

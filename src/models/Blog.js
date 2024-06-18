@@ -2,27 +2,31 @@ import Sequelize from "sequelize"
 import db from '../configs/db.js'
 import Usuario from './Usuario.js'
 
-const Documento = db.define('documentos', {
-    id_doc: {
+const Blog = db.define('blogs', {
+    id_blog: {
         autoIncrement: true,
         type: Sequelize.INTEGER(11),
         allowNull: false,
         primaryKey: true
     },
     titulo: {
-        type: Sequelize.STRING(100),
+        type: Sequelize.STRING(50),
         allowNull: false
     },
     descripcion: {
         type: Sequelize.STRING(255),
         allowNull: true
     },
-    documento: {
+    imagen: {
         type: Sequelize.STRING(255),
         allowNull: false
     },
+    contenido: {
+        type: Sequelize.TEXT,
+        allowNull: false
+    },
     estado: {
-        type: Sequelize.ENUM('0', '1', '2'),
+        type: Sequelize.ENUM('1', '2', '3'),
         allowNull: false,
         defaultValue: '1'
     },
@@ -37,9 +41,9 @@ const Documento = db.define('documentos', {
     }
 });
 
-Documento.belongsTo(Usuario, {
+Blog.belongsTo(Usuario, {
     foreignKey: 'id_user',
     targetKey: 'id'
 })
 
-export default Documento
+export default Blog

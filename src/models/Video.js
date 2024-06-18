@@ -2,32 +2,32 @@ import Sequelize from "sequelize"
 import db from '../configs/db.js'
 import Usuario from './Usuario.js'
 
-const Documento = db.define('documentos', {
-    id_doc: {
+const Video = db.define('videos', {
+    id_video: {
         autoIncrement: true,
         type: Sequelize.INTEGER(11),
         allowNull: false,
         primaryKey: true
     },
     titulo: {
-        type: Sequelize.STRING(100),
+        type: Sequelize.STRING(50),
+        allowNull: false
+    },
+    url: {
+        type: Sequelize.STRING(255),
         allowNull: false
     },
     descripcion: {
         type: Sequelize.STRING(255),
         allowNull: true
     },
-    documento: {
-        type: Sequelize.STRING(255),
-        allowNull: false
-    },
     estado: {
-        type: Sequelize.ENUM('0', '1', '2'),
+        type: Sequelize.ENUM('1', '2', '3'),
         allowNull: false,
         defaultValue: '1'
     },
     creado_el: {
-        type: Sequelize.DATE,
+        type: Sequelize.TIME,
         allowNull: false,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
     },
@@ -37,9 +37,9 @@ const Documento = db.define('documentos', {
     }
 });
 
-Documento.belongsTo(Usuario, {
+Video.belongsTo(Usuario, {
     foreignKey: 'id_user',
     targetKey: 'id'
 })
 
-export default Documento
+export default Video

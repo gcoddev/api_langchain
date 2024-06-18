@@ -2,7 +2,13 @@ node_modules/
 env/
 
 conversations/*.pkl
+
 public/documentos/*.pdf
 public/embeddings/*.pkl
+
+public/imagenes/*.gif
+public/imagenes/*.jpg
+public/imagenes/*.jpeg
+public/imagenes/*.png
 
 .env

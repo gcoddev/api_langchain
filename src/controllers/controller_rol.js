@@ -1,19 +1,6 @@
 'use strict'
 import Rol from '../models/Rol.js'
 
-import Cryptr from 'cryptr'
-const cryptr = new Cryptr('keyCryptrNodeAPI')
-import pass from '../libs/pass.js'
-import keys from '../libs/keys.js'
-import fs from 'fs'
-import { fileURLToPath } from 'url'
-import path, { dirname } from 'path'
-import { exec } from 'child_process'
-import { log } from 'console'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
-
 const ControladorRol = () => { }
 
 ControladorRol.getRoles = async (req, res) => {
