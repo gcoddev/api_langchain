@@ -78,26 +78,17 @@ ControladorDocumento.postDocumento = async (req, res, next) => {
             id_user: id_user
         }
 
-        const command = `python3 load_pdf.py public/documentos/${dataDocumento.documento}`;
-
-        // let msg_stdout = ''
-        // const executePython = () => {
-        //     return new Promise((resolve, reject) => {
+        const command = `python3 load_pdf.py`;
         exec(command, (error, stdout, stderr) => {
             if (error) {
                 console.log(`Error al ejecutar el comando: ${error.message}`)
-                // reject(msg_stdout);
             }
             if (stderr) {
                 console.log(`stderr: ${stderr}`)
-                // reject(msg_stdout);
             }
-            console.log(`stdout: ${stdout}`)
-            // resolve(msg_stdout);
+            console.log(stdout)
         });
-        //     });
-        // };
-        // msg_stdout = await executePython();
+
         await Documento.create(dataDocumento)
 
         res.status(200).json({

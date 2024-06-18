@@ -1,0 +1,8 @@
+langchain-community==0.0.19
+langchain==0.0.324
+openai==0.28.1
+faiss-cpu==1.8.0
+PyPDF2==3.0.1
+sentence-transformers==3.0.1
+setuptools==70.0.0
+python-dotenv==1.0.1
