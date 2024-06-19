@@ -1,15 +1,28 @@
-node_modules/
-env/
+node_modules
+env
 
 conversations/*.pkl
 
 public/documentos/*.pdf
 public/embeddings/*.pkl
 
+
 public/imagenes/*.gif
 public/imagenes/*.jpg
 public/imagenes/*.jpeg
 public/imagenes/*.png
 
-.env
-.vercel
+.vscode
+.DS_Store
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+*.pkl
+env
+.idea
+*.log
+coverage
+*.swp
+*.swo
+
