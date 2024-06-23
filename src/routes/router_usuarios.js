@@ -7,6 +7,9 @@ import ControladorUsuario from '../controllers/controller_usuario.js'
 router.route('/api/login')
     .post(ControladorUsuario.login)
 
+router.route('/api/loginApp')
+    .post(ControladorUsuario.loginApp)
+
 router.route('/api/token')
     .post(ControladorUsuario.verificarToken)
 

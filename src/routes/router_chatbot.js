@@ -20,6 +20,6 @@ router.route('/api')
     })
 
 router.route('/api/ask')
-    .post(token.decodeToken, ControladorChatbot.preguntar)
+    .post(ControladorChatbot.preguntar)
 
 export default router

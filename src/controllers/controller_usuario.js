@@ -7,6 +7,7 @@ import Rol from '../models/Rol.js'
 import pass from '../libs/pass.js'
 import keys from '../libs/keys.js'
 import moment from 'moment'
+import { Op } from 'sequelize'
 
 const ControladorUsuario = () => { }
 
@@ -16,7 +17,11 @@ ControladorUsuario.login = async (req, res) => {
         const usuario = await Usuario.findOne({
             where: {
                 username: username,
-                estado: '1'
+                estado: '1',
+                [Op.or]: [
+                    { id_rol: 1 },
+                    { id_rol: 2 }
+                ]
             }
         });
         if (usuario) {
@@ -35,6 +40,41 @@ ControladorUsuario.login = async (req, res) => {
                     token,
                     expires: moment().add(120, 'minutes').unix()
                 })
+            } else {
+                res.status(401).json({
+                    message: 'Contraseña incorrecta.'
+                })
+            }
+        } else {
+            res.status(400).json({
+                message: 'Cuenta temporalmente Inactiva'
+            })
+        }
+    } catch (err) {
+        console.log(error)
+        res.status(500).json({
+            message: 'Ocurrió un error',
+            error: err.message
+        })
+    }
+}
+
+ControladorUsuario.loginApp = async (req, res) => {
+    const { username, password } = req.body
+    try {
+        const usuario = await Usuario.findOne({
+            where: {
+                username: username,
+                estado: '1'
+            },
+            include: [{
+                model: Rol
+            }]
+        });
+        if (usuario) {
+            const validarPassword = pass.comparaPassword(password, usuario.password);
+            if (validarPassword) {
+                res.status(200).json(usuario)
             } else {
                 res.status(401).json({
                     message: 'Contraseña incorrecta.'
