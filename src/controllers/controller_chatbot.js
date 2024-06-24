@@ -2,12 +2,34 @@
 
 import { exec } from 'child_process';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import { dirname, join } from 'path';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const ControladorChatbot = () => { }
+const ControladorChatbot = () => { };
+
+ControladorChatbot.obtenerChat = async (req, res) => {
+    const { user_id } = req.params;
+    try {
+        const convFilePath = join(__dirname, `../../public/conversations/conv_${user_id}.json`);
+
+        let conversation = [];
+        if (fs.existsSync(convFilePath)) {
+            const rawData = fs.readFileSync(convFilePath);
+            conversation = JSON.parse(rawData);
+        }
+
+        res.status(200).json(conversation)
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            message: 'Ocurrió un error',
+            error: err.message
+        });
+    }
+}
 
 ControladorChatbot.preguntar = async (req, res) => {
     const data = { ...req.body };
@@ -16,10 +38,10 @@ ControladorChatbot.preguntar = async (req, res) => {
             status: 'error',
             message: 'La pregunta es obligatoria'
         });
-    } else if (data.user_question.length <= 7) {
+    } else if (data.user_question.length <= 1) {
         res.status(200).json({
             status: 'error',
-            message: 'La pregunta debe tener como minimo 7 caracteres'
+            message: 'La pregunta debe tener como mínimo 1 caracteres'
         });
     } else if (!data.user_id) {
         res.status(200).json({
@@ -28,8 +50,29 @@ ControladorChatbot.preguntar = async (req, res) => {
         });
     } else {
         try {
+            // Definir la ruta del archivo de conversación
+            const convFilePath = join(__dirname, `../../public/conversations/conv_${data.user_id}.json`);
+
+            // Leer el archivo de conversación o crear uno nuevo si no existe
+            let conversation = [];
+            if (fs.existsSync(convFilePath)) {
+                const rawData = fs.readFileSync(convFilePath);
+                conversation = JSON.parse(rawData);
+            }
+
+            // Agregar la pregunta del usuario a la conversación
+            conversation.push({
+                text: data.user_question,
+                type: 'text',
+                status: 'viewed',
+                isSender: true
+            });
+
+            // Guardar la conversación actualizada en el archivo, creando el archivo si no existe
+            fs.writeFileSync(convFilePath, JSON.stringify(conversation, null, 4));
+
             const command = `python3 load_embeddings.py '${data.user_question}' ${data.user_id}`;
-            let msg_stdout = "";
+            let msg_stdout = '';
 
             const executePython = () => {
                 return new Promise((resolve, reject) => {
@@ -45,12 +88,13 @@ ControladorChatbot.preguntar = async (req, res) => {
                         msg_stdout = `${stdout}`;
 
                         console.log(msg_stdout);
-                        let json
+                        let json;
                         try {
                             json = JSON.parse(msg_stdout);
                             resolve(json);
                         } catch (error) {
                             console.error("Error al parsear el texto como JSON:", error);
+                            reject(error);
                         }
                     });
                 });
@@ -66,6 +110,6 @@ ControladorChatbot.preguntar = async (req, res) => {
             });
         }
     }
-}
+};
 
 export default ControladorChatbot;

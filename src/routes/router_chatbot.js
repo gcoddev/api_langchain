@@ -22,4 +22,7 @@ router.route('/api')
 router.route('/api/ask')
     .post(ControladorChatbot.preguntar)
 
+router.route('/api/chat/:user_id')
+    .get(ControladorChatbot.obtenerChat)
+
 export default router

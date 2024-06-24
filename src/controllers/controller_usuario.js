@@ -174,6 +174,35 @@ ControladorUsuario.postUsuario = async (req, res, next) => {
     }
 }
 
+ControladorUsuario.postUsuarioApp = async (req, res, next) => {
+    const post = { ...req.body }
+    try {
+        const dataUsuario = {
+            ci: post.ci,
+            expedido: post.expedido,
+            paterno: post.paterno,
+            materno: post.materno,
+            nombres: post.nombres,
+            nacimiento: post.nacimiento,
+            celular: post.celular,
+            email: post.email,
+            username: post.username,
+            password: pass.encryptPassword(post.password)
+        }
+        await Usuario.create(dataUsuario)
+
+        res.status(200).json({
+            message: 'Usuario creado'
+        })
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            message: 'Ocurrio un error',
+            error: err.message
+        })
+    }
+}
+
 ControladorUsuario.putUsuario = async (req, res, next) => {
     const put = { ...req.body }
     const { id_user } = req.params
@@ -202,6 +231,41 @@ ControladorUsuario.putUsuario = async (req, res, next) => {
             message: 'Usuario modificado'
         })
     } catch (err) {
+        res.status(500).json({
+            message: 'Ocurrio un error',
+            error: err.message
+        })
+    }
+}
+
+ControladorUsuario.putUsuarioApp = async (req, res, next) => {
+    const put = { ...req.body }
+    const { id_user } = req.params
+    try {
+        const dataUsuario = {
+            ci: put.ci,
+            expedido: put.expedido,
+            paterno: put.paterno,
+            materno: put.materno,
+            nombres: put.nombres,
+            nacimiento: put.nacimiento,
+            celular: put.celular,
+            email: put.email,
+            username: put.username,
+            password: pass.encryptPassword(put.password),
+            estado: put.estado
+        }
+        await Usuario.update(dataUsuario, {
+            where: {
+                id: id_user
+            }
+        })
+
+        res.status(200).json({
+            message: 'Usuario actualizado'
+        })
+    } catch (err) {
+        console.log(err);
         res.status(500).json({
             message: 'Ocurrio un error',
             error: err.message
