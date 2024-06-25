@@ -19,9 +19,20 @@ ControladorChatbot.obtenerChat = async (req, res) => {
         if (fs.existsSync(convFilePath)) {
             const rawData = fs.readFileSync(convFilePath);
             conversation = JSON.parse(rawData);
+        } else {
+            // Si el archivo no existe, crear el archivo con el mensaje de bienvenida
+            conversation = [
+                {
+                    text: "Bienvenido/a al chat.",
+                    type: "text",
+                    status: "viewed",
+                    isSender: false
+                }
+            ];
+            fs.writeFileSync(convFilePath, JSON.stringify(conversation, null, 4));
         }
 
-        res.status(200).json(conversation)
+        res.status(200).json(conversation);
     } catch (err) {
         console.log(err);
         res.status(500).json({
@@ -29,7 +40,7 @@ ControladorChatbot.obtenerChat = async (req, res) => {
             error: err.message
         });
     }
-}
+};
 
 ControladorChatbot.preguntar = async (req, res) => {
     const data = { ...req.body };
