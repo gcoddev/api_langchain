@@ -17,4 +17,8 @@ router.route('/api/video/:id_video')
     .put(token.decodeToken, ControladorVideo.putVideo)
     .delete(token.decodeToken, ControladorVideo.deleteVideo)
 
+
+router.route('/api/videoEstado/:id_video')
+    .post(token.decodeToken, ControladorVideo.estado)
+
 export default router

@@ -1,6 +1,6 @@
 'use strict'
 import Documento from '../models/Documento.js'
-// import Usuario from '../models/Usuario.js'
+import Usuario from '../models/Usuario.js'
 
 import fs from 'fs'
 import { fileURLToPath } from 'url'
@@ -15,9 +15,9 @@ const ControladorDocumento = () => { }
 ControladorDocumento.getDocumentosAll = async (req, res) => {
     try {
         const documentos = await Documento.findAll({
-            // include: ({
-            //     model: Usuario
-            // }),
+            include: ({
+                model: Usuario
+            }),
             where: {
                 estado: {
                     [Sequelize.Op.ne]: '2'
@@ -123,7 +123,6 @@ ControladorDocumento.putDocumento = async (req, res, next) => {
         const dataDocumento = {
             titulo: put.titulo,
             descripcion: put.descripcion,
-            estado: put.estado
         }
         const doc = await Documento.update(dataDocumento, {
             where: {
@@ -133,13 +132,13 @@ ControladorDocumento.putDocumento = async (req, res, next) => {
                 }
             }
         })
-        if (!doc[0]) {
-            res.status(404).json({
-                message: 'El documento no existe'
-            })
-        }
+        // if (!doc[0]) {
+        //     res.status(404).json({
+        //         message: 'El registro no existe'
+        //     })
+        // }
         res.status(200).json({
-            message: 'Datos actualizado'
+            message: 'Registro actualizado'
         })
     } catch (err) {
         console.log(err);
@@ -207,6 +206,24 @@ ControladorDocumento.deleteDocumento = async (req, res, next) => {
         }
         res.status(200).json({
             message: 'Documento eliminado'
+        })
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            message: 'Ocurrio un error',
+            error: err.message
+        })
+    }
+}
+
+ControladorDocumento.estado = async (req, res, next) => {
+    const { id_doc } = req.params
+    const put = { ...req.body }
+    try {
+        await Documento.update({ estado: put.estado }, { where: { id_doc: id_doc } })
+
+        res.status(200).json({
+            message: 'Estado actualizado'
         })
     } catch (err) {
         console.log(err);

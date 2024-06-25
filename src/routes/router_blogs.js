@@ -65,4 +65,8 @@ router.route('/api/blog/:id_blog/:img')
     .put(token.decodeToken, responseUpload, ControladorBlog.putBlogImg)
     .delete(token.decodeToken, ControladorBlog.deleteBlog)
 
+
+router.route('/api/blogEstado/:id_blog')
+    .post(token.decodeToken, ControladorBlog.estado)
+
 export default router

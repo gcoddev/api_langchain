@@ -7,7 +7,7 @@ import Rol from '../models/Rol.js'
 import pass from '../libs/pass.js'
 import keys from '../libs/keys.js'
 import moment from 'moment'
-import { Op } from 'sequelize'
+import { Op, where } from 'sequelize'
 
 const ControladorUsuario = () => { }
 
@@ -231,6 +231,7 @@ ControladorUsuario.putUsuario = async (req, res, next) => {
             message: 'Usuario modificado'
         })
     } catch (err) {
+        console.log(err);
         res.status(500).json({
             message: 'Ocurrio un error',
             error: err.message
@@ -288,6 +289,24 @@ ControladorUsuario.deleteUsuario = async (req, res, next) => {
             message: 'Usuario eliminado'
         })
     } catch (err) {
+        res.status(500).json({
+            message: 'Ocurrio un error',
+            error: err.message
+        })
+    }
+}
+
+ControladorUsuario.estado = async (req, res, next) => {
+    const { id_user } = req.params
+    const put = { ...req.body }
+    try {
+        await Usuario.update({ estado: put.estado }, { where: { id: id_user } })
+
+        res.status(200).json({
+            message: 'Estado actualizado'
+        })
+    } catch (err) {
+        console.log(err);
         res.status(500).json({
             message: 'Ocurrio un error',
             error: err.message

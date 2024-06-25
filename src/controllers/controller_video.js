@@ -169,4 +169,22 @@ ControladorVideo.deleteVideo = async (req, res, next) => {
     }
 }
 
+ControladorVideo.estado = async (req, res, next) => {
+    const { id_video } = req.params
+    const put = { ...req.body }
+    try {
+        await Video.update({ estado: put.estado }, { where: { id_video: id_video } })
+
+        res.status(200).json({
+            message: 'Estado actualizado'
+        })
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            message: 'Ocurrio un error',
+            error: err.message
+        })
+    }
+}
+
 export default ControladorVideo

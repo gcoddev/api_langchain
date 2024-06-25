@@ -80,4 +80,7 @@ router.route('/api/documento/:id_doc/:pdf')
     .put(token.decodeToken, responseUpload, ControladorDocumento.putDocumentoPdf)
     .delete(token.decodeToken, ControladorDocumento.deleteDocumento)
 
+router.route('/api/documentoEstado/:id_doc')
+    .post(token.decodeToken, ControladorDocumento.estado)
+
 export default router

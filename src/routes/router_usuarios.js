@@ -19,6 +19,8 @@ router.route('/api/usuario/:id_user')
     .put(token.decodeToken, ControladorUsuario.putUsuario)
     .delete(token.decodeToken, ControladorUsuario.deleteUsuario)
 
+router.route('/api/usuarioEstado/:id_user')
+    .post(token.decodeToken, ControladorUsuario.estado)
 
 // App
 router.route('/api/loginApp')

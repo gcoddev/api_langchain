@@ -132,12 +132,6 @@ ControladorBlog.putBlog = async (req, res, next) => {
                 id_blog: id_blog
             }
         })
-        console.log(blog);
-        if (!blog[0]) {
-            res.status(404).json({
-                message: 'El blog no existe'
-            })
-        }
         res.status(200).json({
             message: 'Datos actualizados'
         })
@@ -199,6 +193,24 @@ ControladorBlog.deleteBlog = async (req, res, next) => {
         }
         res.status(200).json({
             message: 'Blog eliminado'
+        })
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            message: 'Ocurrio un error',
+            error: err.message
+        })
+    }
+}
+
+ControladorBlog.estado = async (req, res, next) => {
+    const { id_blog } = req.params
+    const put = { ...req.body }
+    try {
+        await Blog.update({ estado: put.estado }, { where: { id_blog: id_blog } })
+
+        res.status(200).json({
+            message: 'Estado actualizado'
         })
     } catch (err) {
         console.log(err);
